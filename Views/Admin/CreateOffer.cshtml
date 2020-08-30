@@ -1,0 +1,97 @@
+@model PAUP.Models.OfferViewModel;
+@{
+    ViewData["Title"] = "Kreiraj ponudu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2>Kreiraj ponudu</h2>
+        <br>
+    </div>
+</div>
+<form class="form-signin" role="form" asp-action="CreateOffer" asp-controller="Admin" method="post">
+<div class="row">
+    <div class="col-md-6 text-center">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                <th scope="col">Naziv</th>
+                <th scope="col">Cijena</th>
+                <th scope="col">Kategorija</th>
+                <th scope="col">Komada</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in Model.Games)
+                {
+                    <tr>
+                        <th scope="row">@game.Name</th>
+                        <td>@game.Price</td>
+                        <td>
+                            @{
+                            switch (@game.Category)
+                            {
+                                case 0:
+                                    <text>
+                                        Avanturistička
+                                    </text>
+                                    break;
+                                case 1:
+                                    <text>
+                                        Akcijska
+                                    </text>
+                                    break;
+                                case 2:
+                                    <text>
+                                        Sport
+                                    </text>
+                                    break;
+                                case 3:
+                                    <text>
+                                        Ostalo
+                                    </text>
+                                    break;
+                            }
+                        }
+                        </td>
+                        <td>@game.Amount</td>
+                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-6 text-center">
+        <input hidden name="OrderId" value="@Model.OrderId">
+        <label for="Name" class="sr-only-focusable">Ime</label>
+            <input type="text" value="@Model.Name" name="Name" class="form-control" placeholder="Ime" readonly>
+            <label class="red"><span asp-validation-for="Name"></span></label>
+            <label for="Surname" class="sr-only-focusable">Prezime</label>
+            <input type="text" value="@Model.Surname" name="Surname" class="form-control" placeholder="Prezime" readonly>
+            <label class="red"><span asp-validation-for="Surname"></span></label>
+            <label for="Adress" class="sr-only-focusable">Adresa</label>
+            <input type="text" minlength="6" value="@Model.Adress" name="Adress" class="form-control" placeholder="Adresa" readonly>
+            <label class="red"><span asp-validation-for="Adress"></span></label>
+            <label for="Email" class="sr-only-focusable">Email</label>
+            <input type="email" value="@Model.Email" name="Email" class="form-control" placeholder="Email" readonly>
+            <label class="red"><span asp-validation-for="Email"></span></label><br><br>
+            
+            <label for="Guarantee" class="sr-only-focusable">Garancija</label>
+            <input class="form-control" type="text" name="Guarantee" value="@Model.Guarantee" placeholder="Garancija">
+            <label>Popust (%):</label>
+            <input class="form-control" type="number" name="Rabat" value="0" max="100" min="0">
+
+            <br><button type="submit" class="btn btn-lg btn-primary btn-block">Pošalji</button>
+    </div>
+
+</div>
+<div class="row">
+    <h2>Ukupno za platiti: <span>@Model.Price</span></h2>
+</div>
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+        
+</script>

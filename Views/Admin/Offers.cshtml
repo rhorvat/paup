@@ -1,0 +1,109 @@
+@model List<PAUP.Models.OfferViewModel>;
+@{
+    
+    ViewData["Title"] = "Ponude";
+    Layout ="~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2>Popis ponuda</h2>
+        <br>
+    </div>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Broj narudžbe</th>
+      <th scope="col">Datum</th>
+      <th scope="col">Cijena</th>
+      <th scope="col">Korisnik</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var offer in Model)
+    {
+        <tr>
+            <th scope="row">@offer.OrderId</th>
+            <th scope="row">@offer.Date</th>
+            <td>@offer.Price HRK</td>
+            <td>@offer.Email</td>
+            <td>
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" onclick="action(1, @offer.OrderId)">
+                            <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" data-toggle="modal" data-id="@offer.OrderId" data-target="#exampleModalCenter">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+  </tbody>
+</table>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Obriši ponudu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p class="parent">Jeste li sigurni da želite obrisati ponudu pod brojem <strong class="idhere" id="UserDelete"></strong> ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+        <button onclick="action(0,0)" type="button" class="btn btn-primary">Obriši</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('#exampleModalCenter').on('show.bs.modal', function (e) {
+                var id = $(e.relatedTarget).data('id');
+                $(".idhere").html(id);
+            });
+        });
+
+        function action(id, order) {
+          if(id == 0){
+            var _offer = {};
+            _offer.OrderId = $(".parent").parent().find("strong").text();
+            $("#exampleModalCenter").modal("hide");
+            $('body').removeClass("modal-open");
+            $(".modal-backdrop").remove();
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("DeleteOffer")",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(_offer),
+                success: function (response) {
+                    if (response == true) {
+                        alert("Uspješno ste obrisali ponudu!")
+                        window.location.href ="/Admin/Offers"
+                    }
+                },
+                failure: function (errMsg) {
+                    alert(errMsg);
+                }
+                });
+          }
+          else {
+            window.location.href = "/Admin/generatePDF/"+ order;
+          }
+            
+        }
+</script>

@@ -1,0 +1,98 @@
+@model List<PAUP.Models.User>;
+@{
+    
+    ViewData["Title"] = "Igre";
+    Layout ="~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h2>Popis korisnika</h2>
+        <br>
+    </div>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Ime i prezime</th>
+      <th scope="col">Adresa</th>
+      <th scope="col">Email</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <th scope="row">@user.Surname @user.Name</th>
+            <td>@user.Adress</td>
+            <td>@user.Email</td>
+            <td>
+                <div class="row">
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" data-toggle="modal" data-id="@user.Email" data-target="#exampleModalCenter">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+  </tbody>
+</table>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Obriši korisnika</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p class="parent">Jeste li sigurni da želite obrisati korisnika <strong class="idhere" id="UserDelete"></strong> ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+        <button onclick="deleteUser()" type="button" class="btn btn-primary">Obriši</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+        $(document).ready(function () {
+            $('#exampleModalCenter').on('show.bs.modal', function (e) {
+                var id = $(e.relatedTarget).data('id');
+                $(".idhere").html(id);
+            });
+        });
+
+        function deleteUser() {
+            var _user = {};
+            _user.Email = $(".parent").parent().find("strong").text();
+            debugger;
+            $("#exampleModalCenter").modal("hide");
+            $('body').removeClass("modal-open");
+            $(".modal-backdrop").remove();
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteUser")",
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(_user),
+            success: function (response) {
+                if (response == true) {
+                    alert("Uspješno ste obrisali korisnika!")
+                    window.location.href ="/Admin/Users"
+                }
+            },
+            failure: function (errMsg) {
+                alert(errMsg);
+            }
+            });
+        }
+</script>

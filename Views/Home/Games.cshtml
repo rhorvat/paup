@@ -1,0 +1,94 @@
+﻿@model List<PAUP.Models.Game>;
+@{
+    
+    ViewData["Title"] = "Igre";
+    Layout ="~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    
+    @foreach (var Game in Model)
+    {
+        <div class="col-md-3" style="padding: 10px">
+            <div class="card" style="height:400px; padding:5px;">
+                <div style="max-height:250px; min-height:250px; width:100%; padding:5px;">
+                    <img src="@Game.ImgUrl" alt="Avatar" style="max-height:250px; width:100%; padding:5px;">
+                </div>
+                
+                <div class="card-container">
+                    <h4><b>@Game.Name</b></h4>
+                    <p>
+                        @{
+                            switch (Game.Category)
+                            {
+                                case 0:
+                                    <text>
+                                        Avanturistička
+                                    </text>
+                                    break;
+                                case 1:
+                                    <text>
+                                        Akcijska
+                                    </text>
+                                    break;
+                                case 2:
+                                    <text>
+                                        Sport
+                                    </text>
+                                    break;
+                                case 3:
+                                    <text>
+                                        Ostalo
+                                    </text>
+                                    break;
+                            }
+                        }
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6">@Game.Price HRK</div>
+                        <div class="col-md-6">
+                            @{
+                                switch (Game.Amount)
+                                {
+                                    case 0:
+                                        <text>
+                                            <span class="red">Nedostupno</span>
+                                        </text>
+                                        break;
+                                    default:
+                                        <text>
+                                            <span class="green">Dostupno</span>
+                                        </text>
+                                        break;
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6"><a href="/Home/GameDetails/@Game.Id">Detalji</a></div>
+                        <div class="col-md-6"><a data-id="@Game.Id" onclick="buy(@Game.Id)">Kupi</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+        function buy(id) {
+            var session = sessionStorage.getItem("igre");
+            var igre = [];
+            if(session!= null){
+                igre = JSON.parse(session);
+                igre.push(id);
+            }
+            else{
+                igre.push(id);
+            }
+            sessionStorage.setItem("igre", JSON.stringify(igre));
+            this.location.reload();
+        }
+        
+</script>

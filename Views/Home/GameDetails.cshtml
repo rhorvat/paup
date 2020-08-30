@@ -1,0 +1,95 @@
+@model PAUP.Models.Game;
+@{
+    ViewData["Title"] = "Detalji igre";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-md-6" style="height:400px; width:300px; padding: 5px">
+        <img src="@Model.ImgUrl" alt="Avatar" style="width:100%; padding:5px;">
+    </div>
+    <div class="col-md-6" style="text-align: center;">
+        <div class="row" style="min-height: 100px; padding:5px;">
+            <div class="col-md-4">
+                <h4>IME</h4>
+            </div>
+            <div class="col-md-8">
+                <h5>@Model.Name</h5>
+            </div>
+        </div>
+        <div class="row" style="min-height: 100px; padding:5px;">
+            <div class="col-md-4">
+                <h4>OPIS</h4>
+            </div>
+            <div class="col-md-8">
+                <h5>@Model.Description</h5>
+            </div>
+        </div>
+        <div class="row" style="min-height: 100px; padding:5px;">
+            <div class="col-md-4">
+                <h4>KATEGORIJA</h4>
+            </div>
+            <div class="col-md-8">
+                <h5>
+                    @{
+                        switch (Model.Category)
+                        {
+                            case 0:
+                                <text>
+                                    Avanturistička
+                                </text>
+                                break;
+                            case 1:
+                                <text>
+                                    Akcijska
+                                </text>
+                                break;
+                            case 2:
+                                <text>
+                                    Sport
+                                </text>
+                                break;
+                            case 3:
+                                <text>
+                                    Ostalo
+                                </text>
+                                break;
+                        }
+                    }
+                </h5>
+            </div>
+        </div>
+        <div class="row" style="min-height: 100px; padding:5px;">
+            <div class="col-md-4">
+                <h4>CIJENA</h4>
+            </div>
+            <div class="col-md-8">
+                <h5>@Model.Price HRK</h5>
+            </div>
+        </div>
+        <div class="row" style="min-height: 100px; padding:5px;">
+            <div class="col-md-4">
+                <h4></h4>
+            </div>
+            <div class="col-md-8">
+                <h5>
+                            @{
+                                switch (Model.Amount)
+                                {
+                                    case 0:
+                                        <text>
+                                            <span class="red">Nedostupno</span>
+                                        </text>
+                                        break;
+                                    default:
+                                        <text>
+                                            <span class="green">Dostupno (@Model.Amount)</span>
+                                        </text>
+                                        break;
+                                }
+                            }
+                </h5>
+            </div>
+        </div>
+    </div>
+
+</div>

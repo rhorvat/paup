@@ -1,0 +1,97 @@
+@model PAUP.Models.UserOrderViewModel
+@{
+    
+    ViewData["Title"] = "Narudžba";
+    Layout ="~/Views/Shared/_Layout.cshtml";
+}
+@if(!@ViewBag.Success) {
+<form class="form-signin" role="form" asp-action="Order" asp-controller="Home" method="post">
+<div class="row">
+    <div class="col-md-12" style="text-align: center;">
+        
+            <label for="Name" class="sr-only-focusable">Ime</label>
+            <input type="text" value="@Model.Name" name="Name" class="form-control" placeholder="Ime" required autofocus>
+            <label class="red"><span asp-validation-for="Name"></span></label>
+            <label for="Surname" class="sr-only-focusable">Prezime</label>
+            <input type="text" value="@Model.Surname" name="Surname" class="form-control" placeholder="Prezime" required>
+            <label class="red"><span asp-validation-for="Surname"></span></label>
+            <label for="Adress" class="sr-only-focusable">Adresa</label>
+            <input type="text" minlength="6" value="@Model.Adress" name="Adress" class="form-control" placeholder="Adresa" required>
+            <label class="red"><span asp-validation-for="Adress"></span></label>
+            <label for="Email" class="sr-only-focusable">Email</label>
+            <input type="email" value="@Model.Email" name="Email" class="form-control" placeholder="Email" required>
+            <label class="red"><span asp-validation-for="Email"></span></label>
+            <input hidden name="GameIds" id="games"/>
+    </div>
+    
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <button data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-secondary btn-block" style="text-color: red !important">Povratak</button>
+    </div>
+    <div class="col-md-6">
+        <button type="submit" class="btn btn-lg btn-primary btn-block">Naruči</button>
+    </div>
+</div>
+</form>
+}
+else {
+    <div class="row">
+        <h2>Hvala na narudžbi.</h2>
+        <p>Na mail adresu Vam uskoro stiže PDF s ponudom od strane našeg zaposlenika. <br>Kliknite <a style="color: blue" onclick="action(2)">OVDJE</a> da biste nastavili pretraživati.</p>
+    </div>
+}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Vrati na košaricu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p class="parent">Želite se vratiti na sadržaj košarice?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+        <button onclick="action(1)" type="button" class="btn btn-primary">Vrati</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+                function readyFn( jQuery ) {
+                    debugger;
+                    var success = @ViewBag.Success.ToString().ToLower();
+                    if(!success){
+                        var games = sessionStorage.getItem("igre");
+                        document.getElementById("games").value =  games;
+                    }
+                    else {
+                        sessionStorage.removeItem("igre");
+                    }
+                    
+                }
+                $( window ).on( "load", readyFn );
+
+                function action(id) {
+                    if(id == 1) {
+                        var session = sessionStorage.getItem("igre");
+                        var igre = [];
+                        igre = JSON.parse(session);
+                        var url = '@Url.Action("Basket", "Home")?games=' + igre;
+                        location.replace(url);
+                    }
+                    else {
+                        sessionStorage.removeItem("igre");
+                        var url = '@Url.Action("Games", "Home")';
+                        location.replace(url);
+                    }
+                    
+                }
+   
+        
+</script>

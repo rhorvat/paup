@@ -1,0 +1,155 @@
+@model IList<PAUP.Models.GameViewModel>;
+@{
+    
+    ViewData["Title"] = "Igre";
+    Layout ="~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    @if(Model.Count == 0) {
+        <h2>Nemate igara u košarici.</h2>
+        <p>Kliknite <a style="color: blue" href="/home/games">OVDJE</a> da biste odabrali.</p>
+    }
+    @for (var i = 0; i<Model.Count; i++)
+    {
+        <div class="col-md-3" style="padding: 10px">
+            <div class="card" style="height:400px; padding:5px;">
+                <div style="max-height:250px; min-height:250px; width:100%; padding:5px;">
+                    <img src="@Model[i].ImgUrl" alt="Avatar" style="max-height:250px; width:100%; padding:5px;">
+                </div>
+                
+                <div class="card-container">
+                    <h4><b>@Model[i].Name</b></h4>
+                    <p>
+                        @{
+                            switch (Model[i].Category)
+                            {
+                                case 0:
+                                    <text>
+                                        Avanturistička
+                                    </text>
+                                    break;
+                                case 1:
+                                    <text>
+                                        Akcijska
+                                    </text>
+                                    break;
+                                case 2:
+                                    <text>
+                                        Sport
+                                    </text>
+                                    break;
+                                case 3:
+                                    <text>
+                                        Ostalo
+                                    </text>
+                                    break;
+                            }
+                        }
+                    </p>
+                    <div class="row">
+                        <div class="col-md-6">@Model[i].Price HRK</div>
+                        <input type="number" id="@Model[i].Id" min="1" max="@Model[i].AmountAvailable" onchange="action(@Model[i].Id, 1)" value="@Model[i].Amount">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" >@Model[i].TotalPrice HRK</div>
+                        <div class="col-md-6"><a data-id="@Model[i].Id" onclick="action(@Model[i].Id, 0)" style="color:red">Obriši</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    
+</div>
+@if(@Model.Count != 0) {
+    <div class="row">
+    <div class="col-md-6">
+        <button data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-lg btn-secondary btn-block" style="text-color: red !important">Odbaci</button>
+    </div>
+    <div class="col-md-6">
+        <button onclick="action(0, 2)" class="btn btn-lg btn-primary btn-block">Unos podataka</button>
+    </div>
+</div>
+}
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Obriši košaricu</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p class="parent">Jeste li sigurni da želite odbaciti sadržaj košarice?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Zatvori</button>
+        <button onclick="action(0, 3)" type="button" class="btn btn-primary">Obriši</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+//0 -> delete, 1 -> value changed, 2-> submit, 3->drop
+                function action(id, actionType) {
+                    var session = sessionStorage.getItem("igre");
+                    var igre = [];
+                    igre = JSON.parse(session);
+                    debugger;
+                    if(actionType == 0) {
+                        igre = $.grep(igre, function (e) { 
+
+                                if(e == id) {
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            });
+                        sessionStorage.setItem("igre", JSON.stringify(igre));
+                        var url = '@Url.Action("Basket", "Home")?games=' + igre;
+                        location.replace(url);
+                    }
+                    else if(actionType == 1) {
+                        var value = parseInt(document.getElementById(id).value);
+                        var maxValue = parseInt(document.getElementById(id).max);
+                        
+                        var index = igre.indexOf(id);
+                        var gameCounts = igre.reduce(function(n, val) {
+                            return n + (val === id)
+                        }, 0);
+                        debugger;
+                        if(value > gameCounts){
+                            igre.push(id)
+                            sessionStorage.setItem("igre", JSON.stringify(igre));
+                            var url = '@Url.Action("Basket", "Home")?games=' + igre;
+                            location.replace(url);
+                        }
+                        else if (value <= gameCounts && value <= maxValue){
+                            if(index != null){
+                                igre.splice(index,1)
+                            }
+                            sessionStorage.setItem("igre", JSON.stringify(igre));
+                            var url = '@Url.Action("Basket", "Home")?games=' + igre;
+                            location.replace(url);
+                        }
+                    }
+                    else if(actionType == 2) {
+                        sessionStorage.setItem("igre", JSON.stringify(igre));
+                        var url = '@Url.Action("Order", "Home")';
+                        location.replace(url);
+                    }
+                    else {
+                        sessionStorage.removeItem("igre");
+                        location.replace("/home/games");
+                    }
+                    
+                    
+                }
+   
+        
+</script>
